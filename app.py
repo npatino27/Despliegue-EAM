@@ -6,7 +6,7 @@ import joblib
 # ==========================================================
 # Cargar modelo
 # ==========================================================
-model = joblib.load("rf_simple.pkl")
+model = joblib.load("best_random_forest_model.pkl")
 
 st.title("🏠 Predicción del Valor de Casas (SalePrice) - Modelo Simplificado")
 st.markdown("Esta aplicación utiliza un modelo **Random Forest** entrenado con 10 variables numéricas clave para estimar el precio de una vivienda en Iowa.")
