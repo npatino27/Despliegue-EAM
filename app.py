@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -45,6 +44,18 @@ nuevos_datos = pd.DataFrame([{
     "TotRmsAbvGrd": TotRmsAbvGrd
 }])
 
+# Cargar columnas originales del modelo
+encoded_columns = joblib.load("encoded_columns.pkl")
+
+# Crear DataFrame con todas las columnas esperadas por el scaler
+# (si falta alguna, se llena con 0)
+for col in encoded_columns:
+    if col not in nuevos_datos.columns:
+        nuevos_datos[col] = 0
+
+# Reordenar las columnas exactamente como el scaler las espera
+nuevos_datos = nuevos_datos[encoded_columns]
+
 # Escalar los datos
 nuevos_datos_scaled = scaler.transform(nuevos_datos)
 
@@ -54,6 +65,3 @@ nuevos_datos_scaled = scaler.transform(nuevos_datos)
 if st.button("Predecir Precio de Venta"):
     pred = model.predict(nuevos_datos_scaled)
     st.success(f"💰 Precio estimado de la vivienda (SalePrice): ${pred[0]:,.2f}")
-
-    st.markdown("---")
-    st.caption("Modelo: Random Forest Regressor | Métrica base: MAPE | Fuente: Dataset Ames Housing (Iowa)")
