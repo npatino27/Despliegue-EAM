@@ -4,16 +4,15 @@ import numpy as np
 import joblib
 
 # ==========================================================
-# 🔹 Cargar modelo y transformadores
+# Cargar modelo
 # ==========================================================
-model = joblib.load("best_random_forest_model.pkl")
-scaler = joblib.load("scaler.pkl")
+model = joblib.load("rf_simple.pkl")
 
-st.title("🏠 Predicción del Valor de Casas (SalePrice) - Iowa")
-st.markdown("Esta aplicación utiliza un modelo **Random Forest Regressor** para estimar el valor de una vivienda en Ames, Iowa.")
+st.title("🏠 Predicción del Valor de Casas (SalePrice) - Modelo Simplificado")
+st.markdown("Esta aplicación utiliza un modelo **Random Forest** entrenado con 10 variables numéricas clave para estimar el precio de una vivienda en Iowa.")
 
 # ==========================================================
-# 🧾 Entradas del usuario
+# Entradas del usuario
 # ==========================================================
 st.header("Ingrese las características de la vivienda:")
 
@@ -29,7 +28,7 @@ Fireplaces = st.slider("Número de chimeneas (Fireplaces)", 0, 3, 1)
 TotRmsAbvGrd = st.slider("Habitaciones sobre el nivel del suelo (TotRmsAbvGrd)", 2, 12, 7)
 
 # ==========================================================
-# 🧮 Preprocesamiento de entrada
+# Crear DataFrame con nombres EXACTOS del entrenamiento
 # ==========================================================
 nuevos_datos = pd.DataFrame([{
     "OverallQual": OverallQual,
@@ -39,31 +38,20 @@ nuevos_datos = pd.DataFrame([{
     "YearBuilt": YearBuilt,
     "FullBath": FullBath,
     "LotArea": LotArea,
-    "1stFlrSF": FirstFlrSF,
+    "1stFlrSF": FirstFlrSF,   # 👈 nombre exacto
     "Fireplaces": Fireplaces,
     "TotRmsAbvGrd": TotRmsAbvGrd
 }])
 
-# Cargar columnas originales del modelo
-encoded_columns = joblib.load("encoded_columns.pkl")
-
-# Crear DataFrame con todas las columnas esperadas por el scaler
-# (si falta alguna, se llena con 0)
-for col in encoded_columns:
-    if col not in nuevos_datos.columns:
-        nuevos_datos[col] = 0
-
-# Reordenar las columnas exactamente como el scaler las espera
-st.write("Número de columnas esperadas por el modelo:", len(encoded_columns))
-st.write("Columnas de entrada actuales:", list(nuevos_datos.columns))
-nuevos_datos = nuevos_datos[encoded_columns]
-
-# Escalar los datos
-nuevos_datos_scaled = nuevos_datos
-
 # ==========================================================
-# 🔮 Predicción
+# Predicción
 # ==========================================================
 if st.button("Predecir Precio de Venta"):
-    pred = model.predict(nuevos_datos_scaled)
-    st.success(f"💰 Precio estimado de la vivienda (SalePrice): ${pred[0]:,.2f}")
+    try:
+        pred = model.predict(nuevos_datos)[0]
+        st.success(f"💰 Precio estimado de la vivienda (SalePrice): ${pred:,.2f}")
+    except Exception as e:
+        st.error(f"⚠️ Error al realizar la predicción: {e}")
+
+    st.markdown("---")
+    st.caption("Modelo: RandomForestRegressor (10 variables numéricas)")
