@@ -57,7 +57,7 @@ for col in encoded_columns:
 nuevos_datos = nuevos_datos[encoded_columns]
 
 # Escalar los datos
-nuevos_datos_scaled = scaler.transform(nuevos_datos)
+nuevos_datos_scaled = nuevos_datos
 
 # ==========================================================
 # 🔮 Predicción
