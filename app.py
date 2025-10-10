@@ -54,6 +54,8 @@ for col in encoded_columns:
         nuevos_datos[col] = 0
 
 # Reordenar las columnas exactamente como el scaler las espera
+st.write("Número de columnas esperadas por el modelo:", len(encoded_columns))
+st.write("Columnas de entrada actuales:", list(nuevos_datos.columns))
 nuevos_datos = nuevos_datos[encoded_columns]
 
 # Escalar los datos
